@@ -1,0 +1,10 @@
+{
+  "_comente": "Renomeie este arquivo para config.json e preencha suas chaves.",
+  "_uso_legitimo": "Use para inteligencia de mercado, monitoramento de marca propria e geracao de leads B2B. Nao use para acessar sistemas de terceiros sem autorizacao.",
+
+  "telegram_bot_token": "COLE_AQUI_SEU_BOT_TOKEN_DO_BOTFATHER",
+  "telegram_chat_id": "COLE_AQUI_SEU_CHAT_ID",
+
+  "_chaves_opcionais": "As fontes abaixo ja funcionam sem chave. Deixe vazio para ignorar.",
+  "newsapi_key": ""
+}

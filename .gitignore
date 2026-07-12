@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+reports/*.html
+reports/*.json
+radar/config.json
