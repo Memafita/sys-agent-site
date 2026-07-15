@@ -1,31 +1,2294 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#0a0a0a;color:#fff;min-height:100vh}
-header{padding:2rem;text-align:center;border-bottom:1px solid #333}
-nav{display:flex;justify-content:center;gap:2rem;padding:1rem}
-nav a{color:#fff;text-decoration:none;opacity:0.7}
-nav a:hover{opacity:1}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;padding:2rem;max-width:1000px;margin:0 auto}
-.card{background:#1a1a1a;padding:1.5rem;border-radius:8px;transition:transform 0.2s}
-.card:hover{transform:translateY(-5px)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#06111f" />
+  <meta name="description" content="JARVIS BR: assistente web mobile com busca guiada por fontes, OCR local, terminal Python no navegador, editor HTML e organização de tarefas." />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="JARVIS BR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="JARVIS BR • Assistente Web Mobile" />
+  <meta property="og:description" content="Busca com fontes, OCR local, Python no navegador, editor HTML e organização pessoal em uma experiência mobile-first." />
+  <meta property="og:image" content="./og-image.png" />
+  <meta property="og:image:alt" content="JARVIS BR, assistente web mobile com OCR, Python no navegador e editor HTML" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="JARVIS BR • Assistente Web Mobile" />
+  <meta name="twitter:description" content="Busca com fontes, OCR local, Python no navegador e editor HTML em um app mobile-first." />
+  <meta name="twitter:image" content="./og-image.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="64x64" href="./icons/favicon.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+  <title>JARVIS BR • Assistente Web Mobile</title>
+  <style>
+    :root {
+      --bg: #030a14;
+      --panel: #071726;
+      --panel-2: #0b2034;
+      --panel-3: rgba(10, 30, 48, 0.86);
+      --line: rgba(72, 203, 255, 0.26);
+      --line-strong: rgba(63, 225, 255, 0.52);
+      --text: #e7f8ff;
+      --muted: #93b2c6;
+      --cyan: #2fd7ff;
+      --cyan-2: #6ff4ff;
+      --green: #38f28c;
+      --yellow: #ffd55f;
+      --red: #ff7c95;
+      --purple: #9788ff;
+      --shadow: 0 0 0 1px rgba(77, 219, 255, 0.12), 0 14px 30px rgba(0, 0, 0, 0.35), 0 0 24px rgba(27, 173, 255, 0.08);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --safe-bottom: max(18px, env(safe-area-inset-bottom));
+      --safe-top: max(16px, env(safe-area-inset-top));
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at top center, rgba(34, 202, 255, 0.14), transparent 38%),
+        radial-gradient(circle at 10% 20%, rgba(0, 255, 153, 0.08), transparent 24%),
+        linear-gradient(180deg, #04101d 0%, #020813 100%);
+      padding: var(--safe-top) 16px calc(98px + var(--safe-bottom));
+    }
+
+    a { color: inherit; }
+    img { max-width: 100%; }
+    button, input, textarea, select {
+      font: inherit;
+      color: inherit;
+    }
+
+    .shell {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      margin-bottom: 18px;
+      backdrop-filter: blur(18px);
+      background: rgba(3, 10, 20, 0.72);
+      border: 1px solid rgba(111, 244, 255, 0.12);
+      border-radius: 999px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 20px rgba(56, 242, 140, 0.75);
+      flex: 0 0 auto;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: clamp(1rem, 1rem + 1.2vw, 1.35rem);
+      letter-spacing: 0.18em;
+      font-weight: 900;
+      color: var(--cyan);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-subtitle {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .inline-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(8, 25, 40, 0.92);
+      border: 1px solid rgba(97, 229, 255, 0.2);
+      color: var(--muted);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(9, 26, 42, 0.92), rgba(5, 17, 29, 0.92));
+      border: 1px solid rgba(107, 240, 255, 0.18);
+      border-radius: 28px;
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -20% auto auto 55%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(47, 215, 255, 0.18), transparent 70%);
+      pointer-events: none;
+      filter: blur(8px);
+    }
+
+    .status-banner {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: rgba(8, 48, 36, 0.64);
+      color: #dfffe9;
+      border: 1px solid rgba(80, 255, 181, 0.34);
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+
+    .status-banner strong { display: block; margin-bottom: 4px; }
+
+    .hero-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.35fr 1fr;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.5rem, 1.2rem + 2vw, 2.4rem);
+      line-height: 1.08;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .hero-actions,
+    .chip-grid,
+    .quick-links,
+    .split-actions,
+    .editor-actions,
+    .task-row,
+    .tool-row,
+    .search-actions,
+    .quote-actions,
+    .opportunity-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions { margin-top: 16px; }
+    .quick-links { margin-top: 16px; }
+
+    .button,
+    .tab-button,
+    .nav-button,
+    .icon-button,
+    .ghost-button,
+    .danger-button,
+    .secondary-button {
+      appearance: none;
+      border: 0;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+      text-decoration: none;
+    }
+
+    .button,
+    .tab-button,
+    .secondary-button,
+    .danger-button,
+    .ghost-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 12px 18px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .button {
+      background: linear-gradient(90deg, #11c7ff, #39e8ff);
+      color: #062538;
+      box-shadow: 0 10px 24px rgba(12, 191, 255, 0.22);
+    }
+
+    .secondary-button {
+      background: rgba(12, 34, 53, 0.95);
+      color: var(--text);
+      border: 1px solid rgba(95, 233, 255, 0.22);
+    }
+
+    .ghost-button {
+      background: rgba(8, 27, 42, 0.7);
+      color: var(--muted);
+      border: 1px dashed rgba(95, 233, 255, 0.22);
+    }
+
+    .danger-button {
+      background: rgba(58, 18, 28, 0.88);
+      color: #ffdce4;
+      border: 1px solid rgba(255, 124, 149, 0.35);
+    }
+
+    .button:hover,
+    .secondary-button:hover,
+    .ghost-button:hover,
+    .danger-button:hover,
+    .tab-button:hover,
+    .nav-button:hover,
+    .icon-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button:active,
+    .secondary-button:active,
+    .ghost-button:active,
+    .danger-button:active,
+    .tab-button:active,
+    .nav-button:active,
+    .icon-button:active {
+      transform: translateY(0);
+    }
+
+    .chip-grid {
+      margin-top: 18px;
+    }
+
+    .chip {
+      flex: 1 1 160px;
+      background: rgba(8, 23, 39, 0.7);
+      border: 1px solid rgba(89, 225, 255, 0.16);
+      border-radius: 18px;
+      padding: 14px 16px;
+      min-height: 86px;
+    }
+
+    .chip b {
+      display: block;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .chip span {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.45;
+    }
+
+    .stats-panel {
+      background: rgba(5, 15, 25, 0.75);
+      border: 1px solid rgba(97, 229, 255, 0.17);
+      border-radius: 22px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .stat-box {
+      background: rgba(8, 24, 40, 0.9);
+      border: 1px solid rgba(83, 211, 255, 0.14);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .stat-box h3 {
+      margin: 0 0 6px;
+      font-size: 0.96rem;
+      color: var(--cyan-2);
+    }
+
+    .stat-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .panel {
+      display: none;
+      margin-top: 18px;
+      animation: fadeUp 0.24s ease;
+    }
+
+    .panel.active { display: block; }
+
+    .panel-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: start;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(8, 23, 39, 0.96), rgba(5, 16, 29, 0.96));
+      border: 1px solid rgba(92, 230, 255, 0.18);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card.soft {
+      background: linear-gradient(180deg, rgba(8, 23, 39, 0.72), rgba(5, 16, 29, 0.72));
+    }
+
+    .card h2,
+    .card h3,
+    .card h4 {
+      margin: 0 0 8px;
+      line-height: 1.2;
+    }
+
+    .card h2 { font-size: clamp(1.1rem, 1rem + 1vw, 1.5rem); }
+    .card h3 { font-size: 1.05rem; }
+    .card h4 { font-size: 0.98rem; }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+      line-height: 1.58;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .section-heading .eyebrow {
+      color: var(--cyan);
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .textarea,
+    .input,
+    .select,
+    .code-area,
+    .output,
+    .result-box,
+    .video-frame,
+    .preview-pane,
+    .task-list,
+    .source-list {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(84, 216, 255, 0.16);
+      background: rgba(4, 14, 24, 0.92);
+      color: var(--text);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .textarea,
+    .code-area,
+    .output,
+    .result-box {
+      padding: 16px;
+    }
+
+    .input,
+    .select {
+      min-height: 50px;
+      padding: 12px 14px;
+    }
+
+    .textarea {
+      min-height: 124px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .code-area,
+    .output,
+    .preview-pane,
+    .result-box,
+    .source-list,
+    .task-list {
+      overflow: auto;
+    }
+
+    .code-area,
+    .output,
+    .terminal {
+      font-family: var(--mono);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .code-area {
+      min-height: 220px;
+      resize: vertical;
+    }
+
+    .output {
+      min-height: 180px;
+      white-space: pre-wrap;
+    }
+
+    .result-box {
+      min-height: 120px;
+      line-height: 1.62;
+      white-space: pre-wrap;
+    }
+
+    .search-layout,
+    .tools-layout,
+    .about-layout,
+    .opportunity-grid,
+    .quote-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .search-layout { grid-template-columns: 1.08fr 0.92fr; }
+    .tools-layout { grid-template-columns: 1fr; }
+    .about-layout { grid-template-columns: 0.95fr 1.05fr; }
+    .opportunity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .quote-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .source-list,
+    .task-list,
+    .opportunity-list,
+    .check-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .source-item,
+    .task-item,
+    .info-item,
+    .quote-card,
+    .opportunity-card,
+    .mini-card {
+      background: rgba(8, 22, 37, 0.88);
+      border: 1px solid rgba(90, 223, 255, 0.14);
+      border-radius: 18px;
+    }
+
+    .source-item {
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .source-title {
+      color: var(--text);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .source-title:hover { color: var(--cyan-2); }
+
+    .source-meta,
+    .quote-meta,
+    .muted-small,
+    .footnote {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(86, 218, 255, 0.16);
+      background: rgba(6, 20, 33, 0.85);
+      color: var(--muted);
+      font-size: 0.83rem;
+      white-space: nowrap;
+    }
+
+    .badge.good {
+      border-color: rgba(56, 242, 140, 0.3);
+      color: #d5ffe4;
+      background: rgba(10, 43, 29, 0.72);
+    }
+
+    .badge.warn {
+      border-color: rgba(255, 213, 95, 0.3);
+      color: #ffefc5;
+      background: rgba(55, 40, 10, 0.72);
+    }
+
+    .badge.soft {
+      color: var(--text);
+    }
+
+    .row-between {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .divider {
+      height: 1px;
+      border: 0;
+      background: linear-gradient(90deg, transparent, rgba(92, 230, 255, 0.24), transparent);
+      margin: 16px 0;
+    }
+
+    .terminal {
+      min-height: 220px;
+      background: #02070f;
+      border-radius: 18px;
+      border: 1px solid rgba(89, 225, 255, 0.16);
+      padding: 16px;
+      color: #d8fff0;
+      white-space: pre-wrap;
+      overflow: auto;
+    }
+
+    .video-frame {
+      min-height: 240px;
+      padding: 10px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 14px;
+      background: #000;
+    }
+
+    .preview-pane {
+      min-height: 220px;
+      padding: 0;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .preview-pane iframe {
+      width: 100%;
+      height: 320px;
+      border: 0;
+      background: #fff;
+    }
+
+    .task-row {
+      align-items: center;
+    }
+
+    .task-row .input { flex: 1 1 220px; }
+
+    .task-list {
+      margin-top: 14px;
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+      min-height: 70px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .task-item label {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      min-width: 0;
+    }
+
+    .task-item span {
+      overflow-wrap: anywhere;
+    }
+
+    .task-item.completed span {
+      color: var(--muted);
+      text-decoration: line-through;
+      opacity: 0.82;
+    }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(22, 46, 63, 0.96);
+      color: var(--text);
+      border: 1px solid rgba(92, 230, 255, 0.16);
+      border-radius: 14px;
+      font-size: 1rem;
+    }
+
+    .quote-card,
+    .opportunity-card,
+    .mini-card {
+      padding: 14px;
+    }
+
+    .quote-value {
+      font-size: clamp(1.2rem, 1rem + 1vw, 1.55rem);
+      font-weight: 900;
+      margin: 8px 0 6px;
+    }
+
+    .opportunity-card h4,
+    .mini-card h4 {
+      margin-bottom: 8px;
+    }
+
+    .opportunity-links {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .opportunity-link {
+      display: block;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(91, 229, 255, 0.16);
+      background: rgba(6, 19, 32, 0.88);
+      text-decoration: none;
+    }
+
+    .opportunity-link strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .opportunity-link span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .check-list li,
+    .info-item {
+      padding: 12px 14px;
+      background: rgba(8, 22, 37, 0.88);
+      border-radius: 16px;
+      border: 1px solid rgba(90, 223, 255, 0.14);
+    }
+
+    .empty-state {
+      display: grid;
+      gap: 8px;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      min-height: 110px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(84, 216, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #10cfff, #36f09d);
+      transition: width 0.22s ease;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 40;
+      width: min(780px, calc(100% - 20px));
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 10px;
+      border-radius: 22px;
+      background: rgba(3, 10, 20, 0.92);
+      border: 1px solid rgba(93, 229, 255, 0.18);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-button {
+      min-height: 62px;
+      background: rgba(8, 22, 37, 0.82);
+      color: var(--muted);
+      border: 1px solid transparent;
+      padding: 10px 8px;
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      text-align: center;
+    }
+
+    .nav-button .emoji { font-size: 1.2rem; }
+    .nav-button .label { font-size: 0.8rem; font-weight: 700; }
+
+    .nav-button.active {
+      color: var(--cyan-2);
+      border-color: rgba(82, 225, 255, 0.22);
+      background: linear-gradient(180deg, rgba(14, 40, 61, 0.96), rgba(8, 24, 40, 0.96));
+      box-shadow: inset 0 1px 0 rgba(137, 245, 255, 0.1), 0 0 22px rgba(32, 185, 255, 0.12);
+    }
+
+    .tab-section-title {
+      margin: 0 0 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      background: rgba(1, 7, 14, 0.72);
+      backdrop-filter: blur(10px);
+      padding: 18px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-card {
+      width: min(640px, 100%);
+      background: linear-gradient(180deg, rgba(9, 25, 40, 0.98), rgba(5, 16, 29, 0.98));
+      border: 1px solid rgba(91, 229, 255, 0.22);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      max-height: min(86vh, 800px);
+      overflow: auto;
+    }
+
+    .modal-card ol,
+    .modal-card ul {
+      color: var(--muted);
+      line-height: 1.6;
+      padding-left: 1.15rem;
+    }
+
+    .support-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 12px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .search-layout,
+      .panel-grid,
+      .about-layout,
+      .opportunity-grid,
+      .quote-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-pane iframe { height: 260px; }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .hero,
+      .card,
+      .modal-card {
+        border-radius: 22px;
+        padding: 16px;
+      }
+
+      .topbar { border-radius: 22px; }
+
+      .brand-title {
+        letter-spacing: 0.13em;
+        white-space: normal;
+      }
+
+      .button,
+      .secondary-button,
+      .ghost-button,
+      .danger-button,
+      .tab-button {
+        width: 100%;
+      }
+
+      .search-actions > *,
+      .split-actions > *,
+      .editor-actions > *,
+      .tool-row > *,
+      .quote-actions > * {
+        flex: 1 1 100%;
+      }
+
+      .bottom-nav .label { font-size: 0.74rem; }
+      .support-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<header>
-<h1>Meu Portfolio</h1>
-<p>Desenvolvedor & Designer</p>
-</header>
-<nav><a href="#">Início</a><a href="#">Projetos</a><a href="#">Sobre</a><a href="#">Contato</a></nav>
-<div class="grid">
-<div class="card"><h3>Projeto 1</h3><p>Descrição do projeto.</p></div>
-<div class="card"><h3>Projeto 2</h3><p>Descrição do projeto.</p></div>
-<div class="card"><h3>Projeto 3</h3><p>Descrição do projeto.</p></div>
-</div>
+  <div class="shell">
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="brand">
+          <span class="brand-dot" aria-hidden="true"></span>
+          <div class="brand-text">
+            <h1 class="brand-title">JARVIS BR • Assistente Web Mobile</h1>
+            <p class="brand-subtitle">Busca guiada por fontes, OCR local, Python no navegador, editor web e organização pessoal.</p>
+          </div>
+        </div>
+        <div class="inline-actions">
+          <span class="pill">🛰️ <span id="onlineStatus">Verificando conexão…</span></span>
+          <button class="secondary-button" id="shareProjectButton" type="button">📤 Compartilhar</button>
+          <button class="secondary-button" id="openInstallModal" type="button">📲 Instalar no iPhone</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="status-banner" role="status" aria-live="polite">
+        <div>✅</div>
+        <div>
+          <strong>Modo confiável</strong>
+          Este projeto prioriza transparência: mostra links, explica limites e evita promessas absolutas. Recursos online dependem da sua conexão e da disponibilidade das fontes.
+        </div>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <h1>Um app mobile-first para pesquisar, organizar e construir direto do navegador.</h1>
+          <p>
+            Feito para funcionar bem no Safari do iPhone e também em desktop. Aqui você consegue pesquisar com referências, extrair texto de imagens, executar Python via WebAssembly, editar HTML/CSS/JS e manter tarefas salvas localmente.
+          </p>
+
+          <div class="hero-actions">
+            <button class="button" data-go-tab="assistente" type="button">💬 Abrir assistente</button>
+            <button class="secondary-button" data-go-tab="ferramentas" type="button">🛠️ Testar ferramentas</button>
+            <a class="secondary-button" href="https://br.linkedin.com/in/victor-matheus-joaquim-segovia-ba4747418" target="_blank" rel="noopener noreferrer">🔗 Ver LinkedIn</a>
+          </div>
+
+          <div class="quick-links">
+            <span class="badge good">✔ Busca orientada por fontes</span>
+            <span class="badge good">✔ OCR local no dispositivo</span>
+            <span class="badge soft">🐍 Python via Pyodide</span>
+            <span class="badge soft">💻 Editor HTML com preview</span>
+            <span class="badge warn">⚠ Alguns recursos variam por navegador</span>
+          </div>
+
+          <div class="chip-grid">
+            <article class="chip">
+              <b>Mais profissional</b>
+              <span>Linguagem mais confiável, menos promessas absolutas e apresentação melhor para portfólio.</span>
+            </article>
+            <article class="chip">
+              <b>Mais útil</b>
+              <span>Busca, notas, tarefas, OCR, código e cotações em uma interface mais clara.</span>
+            </article>
+            <article class="chip">
+              <b>Mais polido</b>
+              <span>Estados de carregamento, feedback visual, persistência local e mensagens de erro melhores.</span>
+            </article>
+            <article class="chip">
+              <b>Pronto para portfólio</b>
+              <span>Com CTA profissional, PWA configurada, ícones, imagem social e narrativa forte para chamar atenção de empresas.</span>
+            </article>
+          </div>
+        </div>
+
+        <aside class="stats-panel" aria-label="Status do sistema">
+          <article class="stat-box">
+            <h3>Compatibilidade detectada</h3>
+            <p id="compatSummary">Carregando verificação do ambiente…</p>
+          </article>
+          <article class="stat-box">
+            <h3>Persistência local</h3>
+            <p>Tarefas, editor HTML e último script Python ficam salvos no navegador deste dispositivo.</p>
+          </article>
+          <article class="stat-box">
+            <h3>Estratégia de confiança</h3>
+            <p>Links e resumos são exibidos com aviso de validação manual. OCR e Python funcionam melhor com arquivos e scripts curtos e claros.</p>
+          </article>
+          <article class="stat-box">
+            <h3>Fluxo sugerido</h3>
+            <p>Pesquise ➜ salve uma tarefa ➜ teste um protótipo ➜ extraia texto ➜ rode Python se precisar automatizar algo.</p>
+          </article>
+          <article class="stat-box">
+            <h3>Prova de execução</h3>
+            <p>Concebido e empacotado com foco mobile-first, inclusive validado em iPhone 11 — ótimo argumento de adaptação e disciplina para portfólio.</p>
+          </article>
+        </aside>
+      </div>
+    </section>
+
+    <main>
+      <section class="panel active" id="panel-assistente" data-panel="assistente">
+        <h2 class="tab-section-title">Assistente</h2>
+        <div class="search-layout">
+          <article class="card">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Pesquisa</span>
+                <h2>Busca guiada por fontes</h2>
+                <p class="helper">Use uma pergunta ou termo. O app tenta buscar referências públicas e monta um resumo curto com links para você conferir.</p>
+              </div>
+              <div class="badge-row">
+                <span class="badge good">🧾 Mostra links</span>
+                <span class="badge warn">🔎 Revise as fontes</span>
+              </div>
+            </div>
+
+            <label class="sr-only" for="searchInput">Pergunta ou termo de busca</label>
+            <textarea id="searchInput" class="textarea" placeholder="Ex.: oportunidades de automação para pequenos negócios, cotação dólar hoje, como melhorar OCR no navegador?"></textarea>
+
+            <div class="search-actions" style="margin-top: 12px;">
+              <button class="button" id="searchButton" type="button">🔎 Buscar referências</button>
+              <button class="secondary-button" id="deepSearchButton" type="button">🕵️ Montar resumo guiado</button>
+              <button class="ghost-button" id="openDuckDuckGo" type="button">↗ Abrir no DuckDuckGo</button>
+            </div>
+
+            <div class="row-between" style="margin-top: 14px;">
+              <div class="badge-row">
+                <span class="badge soft" id="searchStateBadge">Pronto para pesquisar</span>
+                <span class="badge soft" id="searchTimestamp">Sem consulta recente</span>
+              </div>
+            </div>
+
+            <div class="result-box" id="searchSummary" style="margin-top: 14px;" aria-live="polite">
+              <div class="empty-state">
+                <div style="font-size: 1.7rem;">💬</div>
+                <div>Digite uma pergunta para buscar referências e gerar um resumo inicial.</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="card soft">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Fontes encontradas</span>
+                <h2>Resultados e links</h2>
+                <p class="helper">Quando a busca online não estiver disponível, o botão de abrir no navegador continua como fallback seguro.</p>
+              </div>
+            </div>
+            <div class="source-list" id="sourceList" aria-live="polite">
+              <div class="empty-state">
+                <div style="font-size: 1.7rem;">🧭</div>
+                <div>Nenhuma fonte carregada ainda.</div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel-grid" style="margin-top: 16px;">
+          <article class="card">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Tarefas</span>
+                <h2>Minhas tarefas</h2>
+                <p class="helper">Lista simples com salvamento local para organizar freelas, ideias ou próximos passos.</p>
+              </div>
+              <div class="badge-row"><span class="badge soft">💾 Salvo neste dispositivo</span></div>
+            </div>
+
+            <div class="task-row">
+              <input id="taskInput" class="input" type="text" placeholder="Adicionar tarefa…" />
+              <button class="button" id="addTaskButton" type="button">＋ Adicionar</button>
+            </div>
+            <div class="task-list" id="taskList" aria-live="polite"></div>
+          </article>
+
+          <article class="card soft">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Boas práticas</span>
+                <h2>Como usar este módulo melhor</h2>
+              </div>
+            </div>
+            <ul class="check-list">
+              <li>Faça perguntas específicas: <strong>o que</strong>, <strong>para quem</strong> e <strong>em qual contexto</strong>.</li>
+              <li>Use “Montar resumo guiado” para juntar pistas de várias fontes e revisar com calma.</li>
+              <li>Salve uma tarefa sempre que encontrar uma oportunidade ou ideia acionável.</li>
+              <li>Se um link parecer fraco, abra a busca no navegador e compare duas ou três fontes antes de agir.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-ferramentas" data-panel="ferramentas">
+        <h2 class="tab-section-title">Ferramentas</h2>
+
+        <article class="card">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">OCR</span>
+              <h2>Extrair texto de imagem</h2>
+              <p class="helper">Melhorado com pré-processamento simples de contraste. Funciona melhor com fotos nítidas, boa luz e texto reto.</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge good">📷 Suporta câmera/arquivo</span>
+              <span class="badge warn">📝 Resultado varia pela qualidade</span>
+            </div>
+          </div>
+
+          <div class="tool-row">
+            <input id="ocrInput" class="input" type="file" accept="image/*" capture="environment" />
+            <button class="button" id="ocrRunButton" type="button">📸 Extrair texto</button>
+            <button class="secondary-button" id="ocrCopyButton" type="button">📋 Copiar</button>
+            <button class="ghost-button" id="ocrDownloadButton" type="button">⬇ Baixar .txt</button>
+          </div>
+
+          <div class="progress" style="margin-top: 14px;">
+            <div class="progress-bar" id="ocrProgressBar"></div>
+          </div>
+          <div class="row-between" style="margin-top: 10px;">
+            <span class="badge soft" id="ocrStatus">Aguardando imagem…</span>
+            <span class="muted-small">Idiomas: português + inglês</span>
+          </div>
+
+          <div class="panel-grid" style="margin-top: 16px;">
+            <div class="card soft" style="padding: 14px;">
+              <h3>Prévia</h3>
+              <div class="video-frame" id="ocrPreviewBox">
+                <div class="empty-state"><div style="font-size: 1.7rem;">🖼️</div><div>Selecione uma imagem para visualizar aqui.</div></div>
+              </div>
+            </div>
+            <div class="card soft" style="padding: 14px;">
+              <h3>Texto extraído</h3>
+              <div class="output" id="ocrOutput">Nenhum texto extraído ainda.</div>
+            </div>
+          </div>
+        </article>
+
+        <div class="panel-grid" style="margin-top: 16px;">
+          <article class="card">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Python</span>
+                <h2>Terminal Python no navegador</h2>
+                <p class="helper">Carrega Pyodide sob demanda para não pesar a abertura do app. Ideal para testes curtos, parsing e automações pequenas.</p>
+              </div>
+              <div class="badge-row">
+                <span class="badge soft">🐍 Python 3 via WebAssembly</span>
+              </div>
+            </div>
+
+            <div class="split-actions">
+              <button class="button" id="pyLoadButton" type="button">⚙️ Carregar Python</button>
+              <select id="pyExampleSelect" class="select" aria-label="Exemplos Python">
+                <option value="hello">Exemplo: status do app</option>
+                <option value="json">Exemplo: ler JSON</option>
+                <option value="regex">Exemplo: regex</option>
+                <option value="calc">Exemplo: cálculo</option>
+              </select>
+            </div>
+
+            <label class="sr-only" for="pyEditor">Código Python</label>
+            <textarea id="pyEditor" class="code-area" spellcheck="false">print("JARVIS BR pronto")
+for i in range(3):
+    print(f"Etapa {i + 1}: OK")</textarea>
+
+            <div class="editor-actions" style="margin-top: 12px;">
+              <button class="button" id="pyRunButton" type="button">▶ Executar</button>
+              <button class="secondary-button" id="pySaveButton" type="button">💾 Salvar código</button>
+              <button class="ghost-button" id="pyClearButton" type="button">🧹 Limpar saída</button>
+            </div>
+
+            <div class="row-between" style="margin-top: 12px;">
+              <span class="badge soft" id="pyStatus">Python ainda não carregado.</span>
+              <span class="muted-small">A primeira carga pode demorar um pouco.</span>
+            </div>
+
+            <div class="terminal" id="pyOutput" aria-live="polite">>>> Aguardando carregamento do ambiente Python.</div>
+          </article>
+
+          <article class="card">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Editor web</span>
+                <h2>HTML / CSS / JS com preview</h2>
+                <p class="helper">Escreva um protótipo rápido, visualize no iframe e exporte um arquivo HTML completo.</p>
+              </div>
+              <div class="badge-row"><span class="badge good">🧪 Sandbox no preview</span></div>
+            </div>
+
+            <div class="editor-actions">
+              <button class="button" id="editorRunButton" type="button">▶ Atualizar preview</button>
+              <button class="secondary-button" id="editorOpenButton" type="button">↗ Abrir em nova aba</button>
+              <button class="ghost-button" id="editorDownloadButton" type="button">⬇ Exportar HTML</button>
+            </div>
+
+            <label class="sr-only" for="webEditor">Código HTML</label>
+            <textarea id="webEditor" class="code-area" spellcheck="false"><!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo JARVIS</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #08121d; color: #e8f9ff; display: grid; place-items: center; min-height: 100vh; margin: 0; }
+    .box { border: 1px solid #39dfff55; border-radius: 18px; padding: 24px; text-align: center; box-shadow: 0 0 30px #0bd0ff22; }
+    h1 { color: #39dfff; }
+  </style>
+</head>
+<body>
+  <section class="box">
+    <h1>Olá do JARVIS BR</h1>
+    <p>Edite este código e atualize o preview.</p>
+    <button onclick="document.querySelector('p').textContent='Preview funcionando ✅'">Testar interação</button>
+  </section>
+</body>
+</html></textarea>
+
+            <div class="preview-pane" style="margin-top: 14px;">
+              <iframe id="editorPreview" sandbox="allow-scripts allow-modals"></iframe>
+            </div>
+          </article>
+        </div>
+
+        <article class="card" style="margin-top: 16px;">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Compartilhamento</span>
+              <h2>Pré-visualização de tela</h2>
+              <p class="helper">Só começa após a sua confirmação. Em alguns navegadores móveis esse recurso pode não estar disponível.</p>
+            </div>
+            <div class="badge-row"><span class="badge warn" id="shareSupportBadge">Verificando suporte…</span></div>
+          </div>
+
+          <div class="split-actions">
+            <button class="button" id="startShareButton" type="button">🖥️ Solicitar permissão</button>
+            <button class="danger-button" id="stopShareButton" type="button">⏹ Parar</button>
+          </div>
+          <div class="row-between" style="margin-top: 12px;">
+            <span class="badge soft" id="shareStatus">Nenhuma tela sendo compartilhada.</span>
+            <span class="muted-small">Nada é enviado automaticamente para servidor neste arquivo estático.</span>
+          </div>
+          <div class="video-frame" style="margin-top: 16px;">
+            <video id="sharePreview" autoplay playsinline muted></video>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel" id="panel-oportunidades" data-panel="oportunidades">
+        <h2 class="tab-section-title">Oportunidades</h2>
+        <div class="panel-grid">
+          <article class="card">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Plataformas</span>
+                <h2>Freelas e canais úteis</h2>
+                <p class="helper">Curadoria simples para você ter onde procurar projetos e possibilidades de serviço. Valores são estimativas comuns de mercado e variam por experiência, nicho e negociação.</p>
+              </div>
+            </div>
+
+            <div class="opportunity-grid">
+              <article class="opportunity-card">
+                <h4>💻 Freelancing</h4>
+                <p>Bom para começar com entregas pequenas, validar portfólio e ganhar prova de execução.</p>
+                <div class="opportunity-links">
+                  <a class="opportunity-link" href="https://www.99freelas.com.br/" target="_blank" rel="noopener noreferrer">
+                    <strong>99Freelas</strong>
+                    <span>Projetos variados para brasileiros. Bom para tickets menores e médios.</span>
+                  </a>
+                  <a class="opportunity-link" href="https://www.workana.com/" target="_blank" rel="noopener noreferrer">
+                    <strong>Workana</strong>
+                    <span>Projetos em várias áreas: automação, design, redação e suporte digital.</span>
+                  </a>
+                  <a class="opportunity-link" href="https://www.upwork.com/" target="_blank" rel="noopener noreferrer">
+                    <strong>Upwork</strong>
+                    <span>Mercado internacional; exige perfil melhor apresentado e comunicação clara.</span>
+                  </a>
+                </div>
+              </article>
+
+              <article class="opportunity-card">
+                <h4>🤖 Serviços vendáveis</h4>
+                <p>Serviços que combinam bem com o tipo de ferramenta mostrada neste app.</p>
+                <ul class="check-list">
+                  <li>Automação com Python e integração leve.</li>
+                  <li>Ferramentas internas em web app para celular.</li>
+                  <li>OCR para notas, contratos e registros simples.</li>
+                  <li>Protótipos de chatbot e assistentes com foco operacional.</li>
+                </ul>
+              </article>
+
+              <article class="opportunity-card">
+                <h4>📦 Produtos digitais</h4>
+                <p>Use com critério. Não trate isso como dinheiro fácil, e sim como canal comercial.</p>
+                <div class="opportunity-links">
+                  <a class="opportunity-link" href="https://www.hotmart.com/" target="_blank" rel="noopener noreferrer">
+                    <strong>Hotmart</strong>
+                    <span>Produtos digitais, cursos e comissões variáveis.</span>
+                  </a>
+                  <a class="opportunity-link" href="https://www.monetizze.com.br/" target="_blank" rel="noopener noreferrer">
+                    <strong>Monetizze</strong>
+                    <span>Afiliados e distribuição de produtos digitais.</span>
+                  </a>
+                  <a class="opportunity-link" href="https://www.mercadolivre.com.br/" target="_blank" rel="noopener noreferrer">
+                    <strong>Mercado Livre</strong>
+                    <span>Útil para giro de usados, kits ou itens reaproveitados.</span>
+                  </a>
+                </div>
+              </article>
+
+              <article class="opportunity-card">
+                <h4>⚠ Aviso honesto</h4>
+                <p>Este módulo não promete renda garantida. Serve como painel de direção para achar caminhos e organizar ação.</p>
+                <ul class="check-list">
+                  <li>Nenhum caminho dispensa trabalho.</li>
+                  <li>Nunca pague para “liberar” vaga ou tarefa suspeita.</li>
+                  <li>Valide cliente, escopo, prazo e forma de pagamento antes de fechar.</li>
+                </ul>
+              </article>
+            </div>
+          </article>
+
+          <article class="card soft">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Mercado</span>
+                <h2>Cotações em tempo real</h2>
+                <p class="helper">Atualização manual para dólar, euro e bitcoin. Se a API falhar, o app avisa com clareza.</p>
+              </div>
+            </div>
+
+            <div class="quote-actions">
+              <button class="button" id="refreshQuotesButton" type="button">📊 Atualizar cotações</button>
+              <span class="badge soft" id="quotesStatus">Nenhuma consulta recente.</span>
+            </div>
+
+            <div class="quote-grid" style="margin-top: 16px;">
+              <article class="quote-card">
+                <div class="quote-meta">USD/BRL</div>
+                <div class="quote-value" id="usdValue">--</div>
+                <div class="quote-meta" id="usdMeta">Aguardando atualização</div>
+              </article>
+              <article class="quote-card">
+                <div class="quote-meta">EUR/BRL</div>
+                <div class="quote-value" id="eurValue">--</div>
+                <div class="quote-meta" id="eurMeta">Aguardando atualização</div>
+              </article>
+              <article class="quote-card">
+                <div class="quote-meta">BTC/BRL</div>
+                <div class="quote-value" id="btcValue">--</div>
+                <div class="quote-meta" id="btcMeta">Aguardando atualização</div>
+              </article>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="mini-card">
+              <h4>Posicionamento recomendado</h4>
+              <p>Ao usar este projeto como portfólio, mostre primeiro as partes fortes: <strong>OCR</strong>, <strong>Python no navegador</strong>, <strong>editor web</strong> e <strong>mobile-first</strong>. Trate este módulo de oportunidades como complemento, não como foco principal.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-sobre" data-panel="sobre">
+        <h2 class="tab-section-title">Sobre</h2>
+        <div class="about-layout">
+          <article class="card">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Sobre o projeto</span>
+                <h2>JARVIS BR v2 — mais maduro e mais confiável</h2>
+              </div>
+            </div>
+            <p>
+              Esta versão foi reorganizada para parecer menos “promessa” e mais “produto”. A linguagem está mais profissional, os recursos ficaram mais separados por função e os estados de erro/carga foram melhorados para passar mais confiança.
+            </p>
+            <ul class="check-list">
+              <li>Busca com resumo guiado por referências quando possível.</li>
+              <li>OCR local com pré-processamento simples e exportação de texto.</li>
+              <li>Python carregado sob demanda para não deixar a abertura pesada.</li>
+              <li>Editor web com preview em sandbox e exportação de arquivo HTML.</li>
+              <li>Tarefas persistidas localmente para uso prático no dia a dia.</li>
+            </ul>
+
+            <hr class="divider" />
+
+            <div class="support-grid">
+              <div class="info-item">
+                <strong>Compatibilidade</strong>
+                <p class="helper">Safari iPhone: foco principal. Chrome/Edge/desktop: boa experiência geral.</p>
+              </div>
+              <div class="info-item">
+                <strong>Limitações reais</strong>
+                <p class="helper">OCR, busca online e espelhamento dependem do navegador, conexão, qualidade da imagem e resposta das fontes externas.</p>
+              </div>
+              <div class="info-item">
+                <strong>Instalação no iPhone</strong>
+                <p class="helper">Abra no Safari → Compartilhar → Adicionar à Tela de Início. Isso já dá sensação de app mesmo em site estático.</p>
+              </div>
+              <div class="info-item">
+                <strong>Como vender melhor</strong>
+                <p class="helper">Apresente como assistente web mobile com OCR, Python e prototipação rápida. Isso te posiciona melhor profissionalmente.</p>
+              </div>
+              <div class="info-item">
+                <strong>História forte para recrutador</strong>
+                <p class="helper">Boa parte da construção foi feita usando iPhone 11. Isso comunica adaptação, persistência e capacidade de entregar mesmo com limitação de ambiente.</p>
+              </div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="support-grid">
+              <div class="info-item">
+                <strong>Disponível para projetos</strong>
+                <p class="helper">MVPs mobile-first, automações em Python, OCR para documentos, assistentes internos e protótipos de ferramentas web.</p>
+              </div>
+              <div class="info-item">
+                <strong>Contato principal</strong>
+                <p class="helper">LinkedIn público para networking, recrutadores e demonstração de projetos.</p>
+                <p class="helper" style="margin-top:10px;"><a href="https://br.linkedin.com/in/victor-matheus-joaquim-segovia-ba4747418" target="_blank" rel="noopener noreferrer">br.linkedin.com/in/victor-matheus-joaquim-segovia-ba4747418</a></p>
+              </div>
+            </div>
+          </article>
+
+          <article class="card soft">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">Checklist de qualidade</span>
+                <h2>O que foi melhorado neste arquivo</h2>
+              </div>
+            </div>
+            <ul class="check-list">
+              <li><strong>Texto:</strong> claims absolutos reduzidos e tom mais confiável.</li>
+              <li><strong>UX:</strong> feedback visual para busca, OCR, Python, quotes e compartilhamento.</li>
+              <li><strong>Estrutura:</strong> abas mais claras: Assistente, Ferramentas, Oportunidades e Sobre.</li>
+              <li><strong>Portfólio:</strong> projeto mais fácil de mostrar para cliente ou recrutador.</li>
+              <li><strong>Persistência:</strong> tarefas, código Python e HTML salvos em localStorage.</li>
+            </ul>
+
+            <div class="mini-card" style="margin-top: 16px;">
+              <h4>Próximo nível</h4>
+              <p>Se depois você quiser deixar isso ainda mais forte, o passo seguinte é adicionar um backend próprio para busca/fonte, service worker completo e testes reais com métricas de OCR.</p>
+            </div>
+
+            <div class="mini-card" style="margin-top: 16px;">
+              <h4>CTA profissional</h4>
+              <p>Use esta versão como peça de demonstração. Mostre o app funcionando, abra a aba Ferramentas e finalize levando a pessoa para o seu LinkedIn.</p>
+              <div class="hero-actions" style="margin-top: 12px;">
+                <a class="button" href="https://br.linkedin.com/in/victor-matheus-joaquim-segovia-ba4747418" target="_blank" rel="noopener noreferrer">🔗 Abrir LinkedIn</a>
+                <button class="secondary-button" id="copyProjectLinkButton" type="button">📋 Copiar link deste projeto</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <p class="footer-note">Feito para mostrar execução, utilidade e clareza — sem vender milagre.</p>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <button class="nav-button active" data-tab="assistente" type="button">
+      <span class="emoji">💬</span>
+      <span class="label">Assistente</span>
+    </button>
+    <button class="nav-button" data-tab="ferramentas" type="button">
+      <span class="emoji">🛠️</span>
+      <span class="label">Ferramentas</span>
+    </button>
+    <button class="nav-button" data-tab="oportunidades" type="button">
+      <span class="emoji">📈</span>
+      <span class="label">Oportunidades</span>
+    </button>
+    <button class="nav-button" data-tab="sobre" type="button">
+      <span class="emoji">ℹ️</span>
+      <span class="label">Sobre</span>
+    </button>
+  </nav>
+
+  <div class="modal" id="installModal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Instalação</span>
+          <h2 id="installTitle">Adicionar à Tela de Início no iPhone</h2>
+        </div>
+        <button class="icon-button" id="closeInstallModal" type="button" aria-label="Fechar modal">✕</button>
+      </div>
+      <ol>
+        <li>Abra esta página diretamente no <strong>Safari</strong>.</li>
+        <li>Toque em <strong>Compartilhar</strong>.</li>
+        <li>Procure a opção <strong>Adicionar à Tela de Início</strong>.</li>
+        <li>Confirme o nome e toque em <strong>Adicionar</strong>.</li>
+      </ol>
+      <p class="helper">Este pacote já vem pronto com manifest, ícones e service worker. Depois de hospedar na raiz do site, a experiência de instalação fica muito melhor.</p>
+      <div class="hero-actions">
+        <button class="button" id="closeInstallPrimary" type="button">Entendi</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+    const STORAGE_KEYS = {
+      tasks: 'jarvisbr.tasks.v2',
+      html: 'jarvisbr.editor.v2',
+      python: 'jarvisbr.python.v2',
+      lastTab: 'jarvisbr.tab.v2',
+      lastQuery: 'jarvisbr.query.v2'
+    };
+
+    const state = {
+      activeTab: localStorage.getItem(STORAGE_KEYS.lastTab) || 'assistente',
+      tasks: [],
+      pyodide: null,
+      pyLoading: false,
+      shareStream: null,
+      installPromptEvent: null,
+      ocrBusy: false,
+      pyBusy: false,
+      searchBusy: false,
+      lastSources: []
+    };
+
+    const els = {
+      onlineStatus: $('#onlineStatus'),
+      compatSummary: $('#compatSummary'),
+      shareProjectButton: $('#shareProjectButton'),
+      copyProjectLinkButton: $('#copyProjectLinkButton'),
+      installModal: $('#installModal'),
+      searchInput: $('#searchInput'),
+      searchSummary: $('#searchSummary'),
+      sourceList: $('#sourceList'),
+      searchStateBadge: $('#searchStateBadge'),
+      searchTimestamp: $('#searchTimestamp'),
+      taskInput: $('#taskInput'),
+      taskList: $('#taskList'),
+      ocrInput: $('#ocrInput'),
+      ocrOutput: $('#ocrOutput'),
+      ocrStatus: $('#ocrStatus'),
+      ocrProgressBar: $('#ocrProgressBar'),
+      ocrPreviewBox: $('#ocrPreviewBox'),
+      pyEditor: $('#pyEditor'),
+      pyOutput: $('#pyOutput'),
+      pyStatus: $('#pyStatus'),
+      pyExampleSelect: $('#pyExampleSelect'),
+      webEditor: $('#webEditor'),
+      editorPreview: $('#editorPreview'),
+      sharePreview: $('#sharePreview'),
+      shareStatus: $('#shareStatus'),
+      shareSupportBadge: $('#shareSupportBadge'),
+      quotesStatus: $('#quotesStatus'),
+      usdValue: $('#usdValue'),
+      usdMeta: $('#usdMeta'),
+      eurValue: $('#eurValue'),
+      eurMeta: $('#eurMeta'),
+      btcValue: $('#btcValue'),
+      btcMeta: $('#btcMeta')
+    };
+
+    function escapeHtml(value = '') {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function setOnlineStatus() {
+      const online = navigator.onLine;
+      els.onlineStatus.textContent = online ? 'Conectado' : 'Offline';
+    }
+
+    function formatNow() {
+      return new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+      }).format(new Date());
+    }
+
+    function updateCompatibilitySummary() {
+      const supportsShare = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+      const supportsClipboard = !!(navigator.clipboard && navigator.clipboard.writeText);
+      const supportsWorkerStorage = !!window.localStorage;
+      const lines = [
+        supportsShare ? 'espelhamento disponível' : 'espelhamento limitado',
+        supportsClipboard ? 'copiar texto disponível' : 'copiar texto limitado',
+        supportsWorkerStorage ? 'armazenamento local ativo' : 'armazenamento local indisponível'
+      ];
+      els.compatSummary.textContent = 'Ambiente detectado: ' + lines.join(' • ') + '.';
+      els.shareSupportBadge.textContent = supportsShare ? '✅ Navegador com suporte detectado' : '⚠ Navegador pode limitar este recurso';
+      els.shareSupportBadge.className = supportsShare ? 'badge good' : 'badge warn';
+    }
+
+    function switchTab(tab) {
+      state.activeTab = tab;
+      localStorage.setItem(STORAGE_KEYS.lastTab, tab);
+      $$('.panel').forEach(panel => {
+        panel.classList.toggle('active', panel.dataset.panel === tab);
+      });
+      $$('.nav-button').forEach(button => {
+        button.classList.toggle('active', button.dataset.tab === tab);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderTasks() {
+      if (!state.tasks.length) {
+        els.taskList.innerHTML = '<div class="empty-state"><div style="font-size:1.7rem;">📝</div><div>Sem tarefas ainda. Adicione a próxima ação importante.</div></div>';
+        return;
+      }
+
+      els.taskList.innerHTML = state.tasks.map(task => `
+        <div class="task-item ${task.done ? 'completed' : ''}">
+          <label>
+            <input type="checkbox" data-action="toggle-task" data-id="${task.id}" ${task.done ? 'checked' : ''} />
+            <span>${escapeHtml(task.text)}</span>
+          </label>
+          <button class="icon-button" type="button" data-action="delete-task" data-id="${task.id}" aria-label="Remover tarefa">🗑️</button>
+        </div>
+      `).join('');
+    }
+
+    function saveTasks() {
+      localStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(state.tasks));
+      renderTasks();
+    }
+
+    function addTask() {
+      const text = els.taskInput.value.trim();
+      if (!text) return;
+      state.tasks.unshift({ id: crypto.randomUUID(), text, done: false });
+      els.taskInput.value = '';
+      saveTasks();
+    }
+
+    async function copyToClipboard(text, successMessage = 'Copiado com sucesso.') {
+      if (!text.trim()) {
+        alert('Não há conteúdo para copiar.');
+        return;
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const area = document.createElement('textarea');
+          area.value = text;
+          document.body.appendChild(area);
+          area.select();
+          document.execCommand('copy');
+          area.remove();
+        }
+        alert(successMessage);
+      } catch (error) {
+        alert('Não foi possível copiar agora.');
+      }
+    }
+
+    function downloadTextFile(filename, content, type = 'text/plain;charset=utf-8') {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function shareProject() {
+      const shareData = {
+        title: 'JARVIS BR • Assistente Web Mobile',
+        text: 'Projeto mobile-first com busca guiada por fontes, OCR local, Python no navegador e editor web.',
+        url: window.location.href
+      };
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+          return;
+        }
+        await copyToClipboard(window.location.href, 'Link do projeto copiado.');
+      } catch (error) {
+        if (error?.name !== 'AbortError') {
+          await copyToClipboard(window.location.href, 'Link do projeto copiado.');
+        }
+      }
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeout = 14000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return response;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    function makeDomain(url) {
+      try {
+        return new URL(url).hostname.replace(/^www\./, '');
+      } catch {
+        return 'link externo';
+      }
+    }
+
+    function normalizeDuckDuckGoUrl(rawUrl) {
+      try {
+        const parsed = new URL(rawUrl, window.location.href);
+        const uddg = parsed.searchParams.get('uddg');
+        return uddg ? decodeURIComponent(uddg) : rawUrl;
+      } catch {
+        return rawUrl;
+      }
+    }
+
+    async function fetchDuckInstant(query) {
+      try {
+        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&no_html=1&skip_disambig=1`;
+        const response = await fetchWithTimeout(url);
+        return await response.json();
+      } catch {
+        return null;
+      }
+    }
+
+    async function fetchDuckResults(query) {
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://html.duckduckgo.com/html/?q=${query}`)}`;
+      const response = await fetchWithTimeout(proxyUrl);
+      const data = await response.json();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.contents || '', 'text/html');
+      const nodes = Array.from(doc.querySelectorAll('.result'));
+      return nodes.slice(0, 6).map(node => {
+        const link = node.querySelector('.result__title a');
+        const snippet = node.querySelector('.result__snippet');
+        return {
+          title: link ? link.textContent.trim() : 'Resultado sem título',
+          url: link ? normalizeDuckDuckGoUrl(link.getAttribute('href') || '') : '',
+          snippet: snippet ? snippet.textContent.trim() : ''
+        };
+      }).filter(item => item.url);
+    }
+
+    async function fetchPageExcerpt(url) {
+      try {
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        const response = await fetchWithTimeout(proxyUrl, {}, 12000);
+        const data = await response.json();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents || '', 'text/html');
+        doc.querySelectorAll('script, style, noscript, svg, header, footer').forEach(node => node.remove());
+        const text = (doc.body?.textContent || '')
+          .replace(/\s+/g, ' ')
+          .replace(/\u00a0/g, ' ')
+          .trim();
+        return text.slice(0, 800);
+      } catch {
+        return '';
+      }
+    }
+
+    function renderSources(sources) {
+      if (!sources.length) {
+        els.sourceList.innerHTML = '<div class="empty-state"><div style="font-size:1.7rem;">🧭</div><div>Não foi possível carregar fontes agora. Use o botão de abrir no navegador.</div></div>';
+        return;
+      }
+      els.sourceList.innerHTML = sources.map((source, index) => `
+        <article class="source-item">
+          <div class="badge-row">
+            <span class="badge soft">Fonte ${index + 1}</span>
+            <span class="badge soft">${escapeHtml(makeDomain(source.url))}</span>
+          </div>
+          <a class="source-title" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title)}</a>
+          <div class="source-meta">${escapeHtml(source.snippet || 'Sem trecho disponível.')}</div>
+        </article>
+      `).join('');
+    }
+
+    function summarizeFromSources(query, instant, sources, excerpts = []) {
+      const bullets = [];
+      if (instant?.AbstractText) {
+        bullets.push(`Resumo inicial do DuckDuckGo: ${instant.AbstractText}`);
+      }
+      sources.slice(0, 3).forEach((source, index) => {
+        const excerpt = excerpts[index] || source.snippet || 'Sem trecho detalhado disponível.';
+        bullets.push(`Segundo ${source.title}: ${excerpt.slice(0, 220)}${excerpt.length > 220 ? '…' : ''}`);
+      });
+      const intro = `Pergunta: ${query}\n\nLeitura inicial guiada por fontes encontradas:`;
+      const outro = '\n\nUse os links abaixo para validar os detalhes antes de tomar decisão.';
+      return intro + '\n\n' + bullets.map((item, index) => `${index + 1}. ${item}`).join('\n\n') + outro;
+    }
+
+    async function runSearch(mode = 'basic') {
+      const query = els.searchInput.value.trim();
+      if (!query || state.searchBusy) return;
+      state.searchBusy = true;
+      localStorage.setItem(STORAGE_KEYS.lastQuery, query);
+      els.searchStateBadge.textContent = mode === 'deep' ? 'Montando resumo…' : 'Buscando referências…';
+      els.searchTimestamp.textContent = 'Consultando…';
+      els.searchSummary.innerHTML = '<div class="empty-state"><div style="font-size:1.7rem;">⏳</div><div>Consultando fontes públicas…</div></div>';
+
+      try {
+        const [instant, sources] = await Promise.all([
+          fetchDuckInstant(query),
+          fetchDuckResults(query).catch(() => [])
+        ]);
+
+        state.lastSources = sources;
+        renderSources(sources);
+
+        if (!sources.length && !instant?.AbstractText) {
+          els.searchSummary.innerHTML = '<div class="empty-state"><div style="font-size:1.7rem;">⚠️</div><div>Não consegui montar a resposta agora. Tente novamente ou abra a busca no navegador.</div></div>';
+          els.searchStateBadge.textContent = 'Busca indisponível agora';
+          els.searchTimestamp.textContent = formatNow();
+          return;
+        }
+
+        let excerpts = [];
+        if (mode === 'deep' && sources.length) {
+          const excerptTargets = sources.slice(0, 3).map(source => fetchPageExcerpt(source.url));
+          excerpts = await Promise.all(excerptTargets);
+        }
+
+        const summary = summarizeFromSources(query, instant, sources, excerpts);
+        els.searchSummary.textContent = summary;
+        els.searchStateBadge.textContent = mode === 'deep' ? 'Resumo guiado pronto' : 'Busca concluída';
+        els.searchTimestamp.textContent = `Última consulta: ${formatNow()}`;
+      } catch (error) {
+        els.searchSummary.innerHTML = '<div class="empty-state"><div style="font-size:1.7rem;">⚠️</div><div>Falha temporária na pesquisa. Tente de novo em alguns segundos.</div></div>';
+        els.searchStateBadge.textContent = 'Erro temporário';
+        els.searchTimestamp.textContent = formatNow();
+      } finally {
+        state.searchBusy = false;
+      }
+    }
+
+    function openExternalSearch() {
+      const query = els.searchInput.value.trim();
+      const url = `https://duckduckgo.com/?q=${encodeURIComponent(query || 'JARVIS BR')}`;
+      window.open(url, '_blank', 'noopener');
+    }
+
+    async function loadScript(src) {
+      const existing = document.querySelector(`script[data-dynamic-src="${src}"]`);
+      if (existing) {
+        if (existing.dataset.loaded === 'true') return;
+        await new Promise((resolve, reject) => {
+          existing.addEventListener('load', resolve, { once: true });
+          existing.addEventListener('error', reject, { once: true });
+        });
+        return;
+      }
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.dataset.dynamicSrc = src;
+        script.onload = () => {
+          script.dataset.loaded = 'true';
+          resolve();
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadPyodideEnv() {
+      if (state.pyodide || state.pyLoading) return state.pyodide;
+      state.pyLoading = true;
+      els.pyStatus.textContent = 'Baixando ambiente Python…';
+      els.pyOutput.textContent = '>>> Baixando Pyodide. Isso pode levar alguns segundos na primeira vez.';
+      try {
+        await loadScript('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
+        state.pyodide = await window.loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+        els.pyStatus.textContent = 'Python carregado com sucesso.';
+        els.pyOutput.textContent = '>>> Python pronto. Você já pode executar scripts curtos.';
+        return state.pyodide;
+      } catch (error) {
+        els.pyStatus.textContent = 'Falha ao carregar Python.';
+        els.pyOutput.textContent = '>>> Não foi possível carregar o ambiente Python agora. Verifique a conexão e tente de novo.';
+        throw error;
+      } finally {
+        state.pyLoading = false;
+      }
+    }
+
+    function injectPythonExample(key) {
+      const examples = {
+        hello: 'print("JARVIS BR pronto")\nfor i in range(3):\n    print(f"Etapa {i + 1}: OK")',
+        json: 'import json\ntexto = \'{"nome": "Jarvis", "modo": "mobile"}\'\ndados = json.loads(texto)\nprint(dados["nome"], "-", dados["modo"])',
+        regex: 'import re\ntexto = "contato: victor@email.com e suporte@site.com"\nemails = re.findall(r"[\\w.-]+@[\\w.-]+", texto)\nprint(emails)',
+        calc: 'valores = [39.9, 80, 15.5]\nprint("Total:", sum(valores))\nprint("Média:", sum(valores)/len(valores))'
+      };
+      els.pyEditor.value = examples[key] || examples.hello;
+      localStorage.setItem(STORAGE_KEYS.python, els.pyEditor.value);
+    }
+
+    async function runPythonCode() {
+      if (state.pyBusy) return;
+      try {
+        state.pyBusy = true;
+        await loadPyodideEnv();
+        els.pyStatus.textContent = 'Executando script…';
+        els.pyOutput.textContent = '>>> Executando...';
+        const code = els.pyEditor.value;
+        state.pyodide.globals.set('USER_CODE', code);
+        await state.pyodide.runPythonAsync(`
+import io, sys, traceback
+_buffer = io.StringIO()
+_stdout = sys.stdout
+_stderr = sys.stderr
+sys.stdout = _buffer
+sys.stderr = _buffer
+namespace = {}
+try:
+    exec(USER_CODE, namespace)
+except Exception:
+    traceback.print_exc()
+finally:
+    sys.stdout = _stdout
+    sys.stderr = _stderr
+PY_RESULT = _buffer.getvalue()
+        `);
+        const output = state.pyodide.globals.get('PY_RESULT') || '';
+        els.pyOutput.textContent = output || '>>> Script executado sem saída.';
+        els.pyStatus.textContent = 'Execução concluída.';
+        localStorage.setItem(STORAGE_KEYS.python, code);
+      } catch (error) {
+        els.pyOutput.textContent = '>>> Erro ao executar Python.\n' + (error?.message || String(error));
+        els.pyStatus.textContent = 'Erro na execução.';
+      } finally {
+        state.pyBusy = false;
+      }
+    }
+
+    function updateEditorPreview() {
+      const code = els.webEditor.value;
+      els.editorPreview.srcdoc = code;
+      localStorage.setItem(STORAGE_KEYS.html, code);
+    }
+
+    function openEditorInNewTab() {
+      const blob = new Blob([els.webEditor.value], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank', 'noopener');
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+
+    function preprocessImageToCanvas(img) {
+      const canvas = document.createElement('canvas');
+      const maxWidth = 1400;
+      const scale = Math.min(1, maxWidth / img.width);
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      let total = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+        total += gray;
+      }
+      const threshold = total / (data.length / 4);
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+        const boosted = gray > threshold ? 255 : Math.max(0, gray * 0.28);
+        data[i] = boosted;
+        data[i + 1] = boosted;
+        data[i + 2] = boosted;
+      }
+      ctx.putImageData(imageData, 0, 0);
+      return canvas;
+    }
+
+    async function ensureTesseract() {
+      if (window.Tesseract) return;
+      await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
+    }
+
+    function previewSelectedImage(file) {
+      const url = URL.createObjectURL(file);
+      els.ocrPreviewBox.innerHTML = `<img src="${url}" alt="Prévia da imagem selecionada" style="max-height:320px;border-radius:14px;object-fit:contain;" />`;
+    }
+
+    async function runOCR() {
+      const file = els.ocrInput.files?.[0];
+      if (!file || state.ocrBusy) {
+        if (!file) alert('Escolha uma imagem primeiro.');
+        return;
+      }
+      state.ocrBusy = true;
+      els.ocrStatus.textContent = 'Preparando OCR…';
+      els.ocrOutput.textContent = 'Processando imagem…';
+      els.ocrProgressBar.style.width = '8%';
+      try {
+        await ensureTesseract();
+        const img = new Image();
+        const imageUrl = URL.createObjectURL(file);
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = imageUrl;
+        });
+        const canvas = preprocessImageToCanvas(img);
+        els.ocrPreviewBox.innerHTML = '';
+        canvas.style.maxHeight = '320px';
+        canvas.style.maxWidth = '100%';
+        canvas.style.borderRadius = '14px';
+        els.ocrPreviewBox.appendChild(canvas);
+        els.ocrStatus.textContent = 'Lendo texto…';
+        const result = await window.Tesseract.recognize(canvas, 'por+eng', {
+          logger: message => {
+            if (message.status === 'recognizing text') {
+              els.ocrProgressBar.style.width = `${Math.max(10, Math.round(message.progress * 100))}%`;
+            }
+            els.ocrStatus.textContent = `OCR: ${message.status}`;
+          }
+        });
+        const text = (result?.data?.text || '').trim();
+        els.ocrOutput.textContent = text || 'Nenhum texto legível foi encontrado nesta imagem.';
+        els.ocrStatus.textContent = text ? 'OCR concluído.' : 'OCR concluído, mas sem texto confiável.';
+        els.ocrProgressBar.style.width = '100%';
+        URL.revokeObjectURL(imageUrl);
+      } catch (error) {
+        els.ocrOutput.textContent = 'Falha ao executar OCR. Verifique a imagem e tente novamente.';
+        els.ocrStatus.textContent = 'Erro no OCR.';
+        els.ocrProgressBar.style.width = '0%';
+      } finally {
+        state.ocrBusy = false;
+      }
+    }
+
+    async function startScreenShare() {
+      if (!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia)) {
+        alert('Este navegador não oferece getDisplayMedia aqui.');
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+        state.shareStream = stream;
+        els.sharePreview.srcObject = stream;
+        els.shareStatus.textContent = 'Captura ativa. Você pode parar a qualquer momento.';
+        const [track] = stream.getVideoTracks();
+        if (track) track.addEventListener('ended', stopScreenShare, { once: true });
+      } catch (error) {
+        els.shareStatus.textContent = 'Permissão negada ou fluxo cancelado.';
+      }
+    }
+
+    function stopScreenShare() {
+      if (state.shareStream) {
+        state.shareStream.getTracks().forEach(track => track.stop());
+        state.shareStream = null;
+      }
+      els.sharePreview.srcObject = null;
+      els.shareStatus.textContent = 'Nenhuma tela sendo compartilhada.';
+    }
+
+    async function refreshQuotes() {
+      els.quotesStatus.textContent = 'Atualizando…';
+      try {
+        const [fxResponse, btcResponse] = await Promise.all([
+          fetchWithTimeout('https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL'),
+          fetchWithTimeout('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=brl')
+        ]);
+        const fx = await fxResponse.json();
+        const btc = await btcResponse.json();
+        const usd = Number(fx.USDBRL?.bid || 0);
+        const eur = Number(fx.EURBRL?.bid || 0);
+        const btcBrl = Number(btc.bitcoin?.brl || 0);
+        els.usdValue.textContent = usd ? usd.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '--';
+        els.eurValue.textContent = eur ? eur.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '--';
+        els.btcValue.textContent = btcBrl ? btcBrl.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }) : '--';
+        els.usdMeta.textContent = `Variação: ${fx.USDBRL?.pctChange || '--'}%`;
+        els.eurMeta.textContent = `Variação: ${fx.EURBRL?.pctChange || '--'}%`;
+        els.btcMeta.textContent = `Atualizado em ${formatNow()}`;
+        els.quotesStatus.textContent = `Atualizado em ${formatNow()}`;
+      } catch (error) {
+        els.quotesStatus.textContent = 'Falha ao atualizar agora.';
+        els.usdMeta.textContent = 'API indisponível temporariamente';
+        els.eurMeta.textContent = 'API indisponível temporariamente';
+        els.btcMeta.textContent = 'API indisponível temporariamente';
+      }
+    }
+
+    async function openInstallModal() {
+      if (state.installPromptEvent) {
+        state.installPromptEvent.prompt();
+        const outcome = await state.installPromptEvent.userChoice.catch(() => null);
+        state.installPromptEvent = null;
+        if (outcome?.outcome === 'accepted') {
+          console.info('JARVIS BR: instalação aceita.');
+        }
+        return;
+      }
+      els.installModal.classList.add('open');
+      els.installModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeInstallModal() {
+      els.installModal.classList.remove('open');
+      els.installModal.setAttribute('aria-hidden', 'true');
+    }
+
+    async function registerPWA() {
+      if (!('serviceWorker' in navigator)) return;
+      try {
+        const registration = await navigator.serviceWorker.register('./sw.js');
+        if (registration.waiting) {
+          console.info('JARVIS BR: update disponível no service worker.');
+        }
+      } catch (error) {
+        console.warn('JARVIS BR: falha ao registrar service worker.', error);
+      }
+    }
+
+    function bindEvents() {
+      $$('.nav-button').forEach(button => {
+        button.addEventListener('click', () => switchTab(button.dataset.tab));
+      });
+
+      $$('[data-go-tab]').forEach(button => {
+        button.addEventListener('click', () => switchTab(button.dataset.goTab));
+      });
+
+      $('#searchButton').addEventListener('click', () => runSearch('basic'));
+      $('#deepSearchButton').addEventListener('click', () => runSearch('deep'));
+      $('#openDuckDuckGo').addEventListener('click', openExternalSearch);
+
+      $('#addTaskButton').addEventListener('click', addTask);
+      els.taskInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          addTask();
+        }
+      });
+
+      els.taskList.addEventListener('click', event => {
+        const button = event.target.closest('[data-action="delete-task"]');
+        if (!button) return;
+        const id = button.dataset.id;
+        state.tasks = state.tasks.filter(task => task.id !== id);
+        saveTasks();
+      });
+
+      els.taskList.addEventListener('change', event => {
+        const checkbox = event.target.closest('[data-action="toggle-task"]');
+        if (!checkbox) return;
+        const task = state.tasks.find(item => item.id === checkbox.dataset.id);
+        if (!task) return;
+        task.done = checkbox.checked;
+        saveTasks();
+      });
+
+      els.ocrInput.addEventListener('change', () => {
+        const file = els.ocrInput.files?.[0];
+        if (!file) return;
+        previewSelectedImage(file);
+        els.ocrStatus.textContent = 'Imagem pronta para OCR.';
+        els.ocrProgressBar.style.width = '0%';
+      });
+      $('#ocrRunButton').addEventListener('click', runOCR);
+      $('#ocrCopyButton').addEventListener('click', () => copyToClipboard(els.ocrOutput.textContent, 'Texto do OCR copiado.'));
+      $('#ocrDownloadButton').addEventListener('click', () => downloadTextFile('ocr-extraido.txt', els.ocrOutput.textContent));
+
+      $('#pyLoadButton').addEventListener('click', loadPyodideEnv);
+      $('#pyRunButton').addEventListener('click', runPythonCode);
+      $('#pySaveButton').addEventListener('click', () => {
+        localStorage.setItem(STORAGE_KEYS.python, els.pyEditor.value);
+        els.pyStatus.textContent = 'Código salvo localmente.';
+      });
+      $('#pyClearButton').addEventListener('click', () => {
+        els.pyOutput.textContent = '>>> Saída limpa.';
+      });
+      els.pyExampleSelect.addEventListener('change', () => injectPythonExample(els.pyExampleSelect.value));
+
+      $('#editorRunButton').addEventListener('click', updateEditorPreview);
+      $('#editorOpenButton').addEventListener('click', openEditorInNewTab);
+      $('#editorDownloadButton').addEventListener('click', () => downloadTextFile('prototype.html', els.webEditor.value, 'text/html;charset=utf-8'));
+
+      $('#startShareButton').addEventListener('click', startScreenShare);
+      $('#stopShareButton').addEventListener('click', stopScreenShare);
+      $('#refreshQuotesButton').addEventListener('click', refreshQuotes);
+
+      els.shareProjectButton.addEventListener('click', shareProject);
+      if (els.copyProjectLinkButton) {
+        els.copyProjectLinkButton.addEventListener('click', () => copyToClipboard(window.location.href, 'Link do projeto copiado.'));
+      }
+
+      $('#openInstallModal').addEventListener('click', openInstallModal);
+      $('#closeInstallModal').addEventListener('click', closeInstallModal);
+      $('#closeInstallPrimary').addEventListener('click', closeInstallModal);
+      els.installModal.addEventListener('click', event => {
+        if (event.target === els.installModal) closeInstallModal();
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeInstallModal();
+      });
+
+      window.addEventListener('online', setOnlineStatus);
+      window.addEventListener('offline', setOnlineStatus);
+      window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        state.installPromptEvent = event;
+        const installButton = $('#openInstallModal');
+        if (installButton) installButton.textContent = '📲 Instalar app';
+      });
+      window.addEventListener('appinstalled', () => {
+        state.installPromptEvent = null;
+        const installButton = $('#openInstallModal');
+        if (installButton) installButton.textContent = '✅ App instalado';
+      });
+    }
+
+    function restoreState() {
+      try {
+        state.tasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.tasks) || '[]');
+      } catch {
+        state.tasks = [];
+      }
+      const savedHtml = localStorage.getItem(STORAGE_KEYS.html);
+      const savedPython = localStorage.getItem(STORAGE_KEYS.python);
+      const savedQuery = localStorage.getItem(STORAGE_KEYS.lastQuery);
+      if (savedHtml) els.webEditor.value = savedHtml;
+      if (savedPython) els.pyEditor.value = savedPython;
+      if (savedQuery) els.searchInput.value = savedQuery;
+      renderTasks();
+      updateEditorPreview();
+      switchTab(state.activeTab);
+    }
+
+    function init() {
+      setOnlineStatus();
+      updateCompatibilitySummary();
+      bindEvents();
+      restoreState();
+      refreshQuotes();
+      registerPWA();
+    }
+
+    init();
+  </script>
 </body>
 </html>
