@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Senior Cybersecurity Engineer. Rapid code debugging, system recovery, and performance optimization. Fix your error in minutes, not days." />
+  <meta property="og:title" content="Rapid Technical Resolution • Cybersecurity Engineer" />
+  <meta property="og:description" content="Specialist in security, infrastructure, and performance recovery. Python, Java, HTML/JS automation." />
+  <meta property="og:image" content="./assets/hero-cyber.jpg" />
+  <meta name="author" content="Senior Cybersecurity Engineer — Rapid Resolution" />
+  <meta name="theme-color" content="#02070f" />
+  <title>Rapid Technical Resolution • Senior Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #02070f;
+      --surface: #071726;
+      --surface-2: #0b2034;
+      --surface-3: rgba(10, 30, 48, 0.86);
+      --line: rgba(72, 203, 255, 0.14);
+      --line-strong: rgba(63, 225, 255, 0.36);
+      --text: #e7f8ff;
+      --text-dim: #93b2c6;
+      --cyan: #2fd7ff;
+      --cyan-deep: #11aab8;
+      --green: #38f28c;
+      --red: #ff7c95;
+      --yellow: #ffd55f;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(47, 215, 255, 0.08) 0%, transparent 30%),
+        radial-gradient(circle at 80% 90%, rgba(56, 242, 140, 0.06) 0%, transparent 30%),
+        radial-gradient(circle at 50% 50%, rgba(255, 124, 149, 0.03) 0%, transparent 40%);
+    }
+
+    /* Noise overlay */
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px;
+    }
+
+    /* Container */
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(900px, 92%);
+      margin: 0 auto;
+      padding: 72px 0 120px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 80px;
+    }
+    .logo-group { display: flex; align-items: center; gap: 14px; }
+    .logo-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 18px rgba(56, 242, 140, 0.65);
+      flex-shrink: 0;
+    }
+    .logo-text h1 {
+      font-size: clamp(1.1rem, 0.9rem + 1vw, 1.35rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      line-height: 1.1;
+    }
+    .logo-text span {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid rgba(107, 240, 255, 0.10);
+      background:
+        linear-gradient(180deg, rgba(9, 25, 42, 0.96), rgba(5, 16, 29, 0.98)),
+        url('./assets/hero-cyber.jpg') center / cover no-repeat;
+      background-blend-mode: overlay;
+      padding: 64px 42px 58px;
+      box-shadow:
+        0 0 0 1px rgba(77, 219, 255, 0.08),
+        0 30px 60px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -10%; right: -10%;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(47, 215, 255, 0.12), transparent 70%);
+      filter: blur(40px);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 242, 140, 0.25);
+      background: rgba(10, 43, 29, 0.65);
+      color: var(--green);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .hero h2 {
+      font-size: clamp(2rem, 1.3rem + 3.5vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .hero h2 .accent { color: var(--cyan); }
+    .hero .sub {
+      font-size: clamp(1rem, 0.9rem + 0.6vw, 1.15rem);
+      color: var(--text-dim);
+      max-width: 620px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+    .hero-cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      border: 0;
+      font-family: var(--font);
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 24px rgba(12, 191, 255, 0.22);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(12, 191, 255, 0.28); }
+    .btn-primary {
+      background: linear-gradient(90deg, #11c7ff, #39e8ff);
+      color: #062538;
+    }
+    .btn-secondary {
+      background: rgba(8, 25, 40, 0.92);
+      color: var(--text);
+      border: 1px solid rgba(95, 233, 255, 0.22);
+      box-shadow: none;
+    }
+    .btn-secondary:hover { box-shadow: 0 0 20px rgba(32, 185, 255, 0.12); }
+
+    /* Section divider */
+    .divider {
+      height: 1px;
+      border: 0;
+      margin: 72px 0;
+      background: linear-gradient(90deg, transparent, rgba(92, 230, 255, 0.18), transparent);
+    }
+
+    /* Section headings */
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+    h3 {
+      font-size: clamp(1.2rem, 1rem + 1.2vw, 1.55rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+    .section-body {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      max-width: 680px;
+    }
+
+    /* Authority / Stack */
+    .authority-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 36px;
+    }
+    .auth-card {
+      background: linear-gradient(180deg, rgba(8, 23, 39, 0.92), rgba(5, 16, 29, 0.92));
+      border: 1px solid rgba(89, 225, 255, 0.12);
+      border-radius: 20px;
+      padding: 28px 26px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .auth-card:hover { transform: translateY(-3px); border-color: rgba(89, 225, 255, 0.28); }
+    .auth-card .icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(47, 215, 255, 0.08);
+      border: 1px solid rgba(47, 215, 255, 0.16);
+      display: grid; place-items: center;
+      color: var(--cyan); font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+    .auth-card h4 {
+      font-size: 1.05rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em;
+    }
+    .auth-card p {
+      font-size: 0.92rem; color: var(--text-dim); line-height: 1.55;
+    }
+
+    /* Services */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 32px;
+    }
+    .service-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(8, 23, 39, 0.96), rgba(5, 16, 29, 0.98));
+      border: 1px solid rgba(89, 225, 255, 0.10);
+      border-radius: 22px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(89, 225, 255, 0.22);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+    }
+    .service-card .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 999px;
+      border: 1px solid rgba(56, 242, 140, 0.2);
+      background: rgba(10, 43, 29, 0.65);
+      color: var(--green);
+      font-family: var(--mono);
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .service-card h4 {
+      font-size: 1.15rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 10px;
+    }
+    .service-card p {
+      font-size: 0.92rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 14px;
+    }
+    .service-card .specs {
+      font-family: var(--mono);
+      font-size: 0.82rem; color: var(--cyan);
+      line-height: 1.6;
+    }
+    .service-card .specs span { color: var(--text-dim); }
+
+    /* Stats */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .stat-box {
+      background: rgba(8, 23, 39, 0.7);
+      border: 1px solid rgba(89, 225, 255, 0.10);
+      border-radius: 18px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .stat-box .num {
+      font-family: var(--mono);
+      font-size: 2.2rem; font-weight: 700; letter-spacing: -0.04em;
+      color: var(--cyan);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-box .label {
+      font-size: 0.85rem; color: var(--text-dim); font-weight: 500; letter-spacing: 0.02em;
+    }
+
+    /* Process */
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .step {
+      position: relative;
+      background: rgba(8, 23, 39, 0.7);
+      border: 1px solid rgba(89, 225, 255, 0.10);
+      border-radius: 18px;
+      padding: 30px 24px 26px;
+    }
+    .step-num {
+      position: absolute; top: -14px; left: 24px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, #2fd7ff, #11c7ff);
+      color: #02070f; font-weight: 900; font-size: 0.85rem;
+      display: grid; place-items: center;
+      box-shadow: 0 0 14px rgba(47, 215, 255, 0.35);
+    }
+    .step h4 { font-size: 1.05rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .step p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.55; }
+
+    /* CTA Section */
+    .cta-section {
+      margin-top: 80px;
+      border-radius: 28px;
+      border: 1px solid rgba(107, 240, 255, 0.12);
+      background: linear-gradient(180deg, rgba(9, 26, 42, 0.92), rgba(5, 16, 29, 0.98));
+      padding: 64px 42px;
+      text-align: center;
+      box-shadow: 0 0 0 1px rgba(77, 219, 255, 0.06), 0 24px 50px rgba(0, 0, 0, 0.3);
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: -40% auto auto 50%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(47, 215, 255, 0.10), transparent 70%);
+      filter: blur(50px); pointer-events: none;
+      transform: translateX(-50%);
+    }
+    .cta-section h3 { font-size: clamp(1.3rem, 1.1rem + 2vw, 1.9rem); }
+    .cta-section p { color: var(--text-dim); max-width: 580px; margin: 0 auto 28px; font-size: 1.05rem; }
+    .cta-form {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center;
+    }
+    .cta-form input[type="email"] {
+      min-width: 280px; flex: 1 1 300px; max-width: 420px;
+      height: 52px; padding: 0 18px; border-radius: 14px;
+      border: 1px solid rgba(89, 225, 255, 0.22);
+      background: rgba(4, 14, 24, 0.92);
+      color: var(--text); font-family: var(--font); font-size: 0.95rem;
+      outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cta-form input[type="email"]:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(47, 215, 255, 0.12); }
+    .cta-form input[type="email"]::placeholder { color: var(--text-dim); opacity: 0.7; }
+
+    /* Footer */
+    .footer {
+      margin-top: 72px; padding-top: 36px;
+      border-top: 1px solid rgba(89, 225, 255, 0.10);
+      display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .footer p { font-size: 0.82rem; color: var(--text-dim); }
+    .footer a { color: var(--cyan); text-decoration: none; font-weight: 600; font-family: var(--mono); font-size: 0.82rem; }
+    .footer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 680px) {
+      .shell { padding: 48px 0 100px; }
+      .hero { padding: 48px 24px 42px; border-radius: 20px; }
+      .cta-section { padding: 48px 24px; border-radius: 20px; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .auth-card, .service-card, .step, .stat-box { padding: 24px 22px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="shell">
+    <!-- Header -->
+    <header class="header" aria-label="Brand header">
+      <a href="#" class="logo-group" aria-label="Site home">
+        <span class="logo-dot" aria-hidden="true"></span>
+        <div class="logo-text">
+          <h1>Rapid Resolution</h1>
+          <span>Senior Cybersecurity Engineer</span>
+        </div>
+      </a>
+      <a href="#cta" class="btn btn-secondary" style="font-size:0.85rem; padding:10px 18px; min-height:44px;">Send technical problem</a>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Hero introduction">
+      <div class="hero-badge" aria-label="Status badge">⚡ Ready for rapid debug & automation</div>
+      <h2>
+        Fix your error in <span class="accent">minutes</span>, not days.<br />
+        Code debugging, security recovery, system optimization.
+      </h2>
+      <p class="sub">
+        Senior engineer focused on rapid code debugging (Python, Java, HTML/JS) and system automation. When performance drops or security fails, I recover it fast.
+      </p>
+      <div class="hero-cta-row">
+        <a href="#cta" class="btn btn-primary">Send your technical problem now →</a>
+        <a href="#cta" class="btn btn-secondary" style="font-size:0.85rem; padding:10px 18px; min-height:44px;">See services</a>
+      </div>
+    </section>
+
+    <hr class="divider" aria-hidden="true" />
+
+    <!-- Authority -->
+    <section aria-label="Authority and expertise">
+      <p class="section-label">Authority</p>
+      <h3>Specialist in security, infrastructure, and performance recovery</h3>
+      <p class="section-body">
+        I combine low-level debugging with high-level automation. Whether it's a broken Python pipeline, a Java service crash, an HTML/JS vulnerability, or an infrastructure performance drop — the approach is always the same: diagnose fast, fix cleanly, and document the fix.
+      </p>
+
+      <div class="authority-grid" aria-label="Expertise cards">
+        <article class="auth-card" aria-label="Code debugging">
+          <div class="icon" aria-hidden="true">⚡</div>
+          <h4>Rapid Code Debug</h4>
+          <p>Python, Java, HTML/JS. Trace errors, clean code, and restore flow in minutes.</p>
+        </article>
+        <article class="auth-card" aria-label="Security and recovery">
+          <div class="icon" aria-hidden="true">🔒</div>
+          <h4>Security & Recovery</h4>
+          <p>Identify vulnerabilities, recover systems, and harden infrastructure before damage spreads.</p>
+        </article>
+        <article class="auth-card" aria-label="Automation and optimization">
+          <div class="icon" aria-hidden="true">⚙️</div>
+          <h4>System Automation</h4>
+          <p>Automate repetitive tasks, optimize pipelines, and recover lost performance quickly.</p>
+        </article>
+      </div>
+    </section>
+
+    <hr class="divider" aria-hidden="true" />
+
+    <!-- Services -->
+    <section id="services" aria-label="Services">
+      <p class="section-label">Services</p>
+      <h3>What I fix — and how fast</h3>
+      <p class="section-body">
+        Each service is designed for quick turnaround. No long contracts. Just clear scope, rapid delivery, and a clean fix.
+      </p>
+
+      <div class="services-grid" aria-label="Service cards">
+        <article class="service-card" aria-label="Rapid code debugging">
+          <span class="tag">Rapid Debug</span>
+          <h4>Code Debug & Repair</h4>
+          <p>Trace the failure point. Clean code. Restore functionality. It works in minutes when the problem is clear.</p>
+          <div class="specs">
+            <span>Python • Java • HTML/JS</span><br />
+            <span>Trace errors • Repair pipelines</span>
+          </div>
+        </article>
+
+        <article class="service-card" aria-label="Security and performance recovery">
+          <span class="tag">Security</span>
+          <h4>Security & Performance</h4>
+          <p>Recover performance drops. Patch vulnerabilities. Strengthen the infrastructure that holds your data safe.</p>
+          <div class="specs">
+            <span>Infrastructure • Security</span><br />
+            <span>Performance recovery</span>
+          </div>
+        </article>
+
+        <article class="service-card" aria-label="System automation">
+          <span class="tag">Automation</span>
+          <h4>System Optimization</h4>
+          <p>Automate what breaks repeatedly. Optimize systems to run faster, with less manual overhead.</p>
+          <div class="specs">
+            <span>Automation • Optimization</span><br />
+            <span>System recovery</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <hr class="divider" aria-hidden="true" />
+
+    <!-- Stats -->
+    <section aria-label="Performance statistics">
+      <div class="stats-row">
+        <article class="stat-box" aria-label="Response time">
+          <div class="num">&lt;15m</div>
+          <div class="label">Average initial response</div>
+        </article>
+        <article class="stat-box" aria-label="Resolution time">
+          <div class="num">2-6h</div>
+          <div class="label">Typical resolution window</div>
+        </article>
+        <article class="stat-box" aria-label="Availability">
+          <div class="num">24/7</div>
+          <div class="label">Emergency technical support</div>
+        </article>
+        <article class="stat-box" aria-label="Experience">
+          <div class="num">8+</div>
+          <div class="label">Years in security & systems</div>
+        </article>
+      </div>
+    </section>
+
+    <hr class="divider" aria-hidden="true" />
+
+    <!-- Process -->
+    <section aria-label="How it works">
+      <p class="section-label">Process</p>
+      <h3>How the fix works — in minutes</h3>
+      <p class="section-body">
+        I keep it simple: send the problem, get a quick diagnosis, approve the fix, and receive the result. No bureaucracy. Just rapid resolution.
+      </p>
+
+      <div class="process-steps" aria-label="Steps">
+        <article class="step" aria-label="Step 1">
+          <span class="step-num" aria-hidden="true">1</span>
+          <h4>Send your problem</h4>
+          <p>Share the error message, system behavior, or code snippet. I review it immediately.</p>
+        </article>
+        <article class="step" aria-label="Step 2">
+          <span class="step-num" aria-hidden="true">2</span>
+          <h4>Rapid diagnosis</h4>
+          <p>Identify the root cause quickly. No long investigations. Clear, direct analysis.</p>
+        </article>
+        <article class="step" aria-label="Step 3">
+          <span class="step-num" aria-hidden="true">3</span>
+          <h4>Fix & deliver</h4>
+          <p>Repair the code, recover performance, or secure the system. Deliver with documentation.</p>
+        </article>
+      </div>
+    </section>
+
+    <hr class="divider" aria-hidden="true" />
+
+    <!-- CTA -->
+    <section id="cta" class="cta-section" aria-label="Call to action">
+      <p class="section-label" style="text-align:center;">Call to Action</p>
+      <h3>Send your technical problem now for an immediate analysis</h3>
+      <p>
+        I fix broken code, recover crashed systems, and restore performance — in minutes, not days. No long contracts. Just rapid resolution.
+      </p>
+      <form class="cta-form" onsubmit="event.preventDefault(); this.innerHTML='<p style=\'color:var(--green);font-weight:800;letter-spacing:0.02em;\'>Message sent. You will receive a response shortly.</p>'; this.style.flexDirection='column';" aria-label="Send problem form">
+        <input type="email" placeholder="your@email.com" aria-label="Your email" required />
+        <button type="submit" class="btn btn-primary">Send technical problem →</button>
+      </form>
+      <p style="font-size:0.8rem; color:var(--text-dim); margin-top:18px; opacity:0.8;">
+        Response within 15 minutes for urgent technical issues.
+      </p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" aria-label="Footer">
+      <p>© 2026 • Senior Cybersecurity Engineer • Rapid Resolution</p>
+      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile">LinkedIn Profile →</a>
+    </footer>
+  </div>
+</body>
+</html>
